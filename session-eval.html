@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevScreen - Guided Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="session-eval.css">
+    <script src="auth.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js"></script>
+</head>
+<body>
+    <header class="eval-header">
+        <div class="logo">DevScreen <span>Enterprise</span></div>
+        
+        <div class="stepper">
+            <div class="step active" id="step-1">
+                <div class="step-num">1</div><div class="step-label">System Design</div>
+            </div><div class="step-line"></div>
+            <div class="step pending" id="step-2">
+                <div class="step-num">2</div><div class="step-label">Database & Code</div>
+            </div><div class="step-line"></div>
+            <div class="step pending" id="step-3">
+                <div class="step-num">3</div><div class="step-label">Review</div>
+            </div>
+        </div>
+
+        <div class="timer">Session Time: 02:00:00</div>
+    </header>
+
+    <main class="eval-layout">
+        <aside class="ai-panel">
+            <div class="panel-header">
+                <h3>AI Tech Lead</h3>
+                <span class="badge prompt-guard">PROMPT GUARD: ON</span>
+            </div>
+            
+            <div class="mission-brief" id="dynamic-mission-brief">
+                <strong>Role Track:</strong> Fullstack Architect<br>
+                <strong>Status:</strong> Under Evaluation
+            </div>
+
+            <div class="chat-container" id="chat-box">
+                <div class="message ai">
+                    <strong>AI Lead:</strong> Welcome to your challenge workspace. Please thoroughly review the requirements provided on the right interface. Coordinate your design thoughts with me here before moving forward.
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <textarea id="user-input" placeholder="Explain your implementation or ask questions..."></textarea>
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </aside>
+
+        <section class="workspace-panel">
+            <div class="panel-header workspace-nav">
+                <div class="nav-group">
+                    <button class="btn-nav" id="btn-prev" onclick="handlePrevSession()" disabled>&larr; Back</button>
+                    <h3 id="workspace-title">System Architecture Requirements</h3>
+                </div>
+                <div class="nav-group">
+                    <button class="btn-action hidden" id="btn-run" onclick="updateLivePreview()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Run Code
+                    </button>
+                    <button class="btn-nav primary" id="btn-next" onclick="handleNextSession()">Next Session &rarr;</button>
+                </div>
+            </div>
+
+            <div class="workspace-content">
+                <div id="view-task" class="view-container active">
+                    <div class="task-title" style="font-size: 1.4rem; font-weight: 600; margin-bottom: 8px;">Project Assignment Brief</div>
+                    <div class="task-subtitle" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px;">Review core administrative setups and articulate architectural flows.</div>
+                    
+                    <div id="assigned-task-text" class="task-text-box">Loading assignment configurations from local storage...</div>
+                </div>
+
+                <div id="view-editor" class="editor-workspace-wrapper hidden">
+                    <div class="file-selector-tabs">
+                        <button class="file-tab-btn active" id="tab-index-html" onclick="switchWorkspaceFile('index.html')">index.html</button>
+                        <button class="file-tab-btn" id="tab-style-css" onclick="switchWorkspaceFile('style.css')">style.css</button>
+                        <button class="file-tab-btn" id="tab-script-js" onclick="switchWorkspaceFile('script.js')">script.js</button>
+                        <button class="file-tab-btn" id="tab-component-ts" onclick="switchWorkspaceFile('component.ts')">component.ts</button>
+                        <button class="file-tab-btn" id="tab-query-sql" onclick="switchWorkspaceFile('query.sql')">query.sql</button>
+                    </div>
+
+                    <div class="workspace-split" id="workspace-splitter-layout">
+                        <div class="code-section" id="code-pane-container">
+                            <div class="preview-bar" style="background:#f1f5f9; border-bottom:1px solid var(--border);">
+                                <span style="font-size:0.75rem; font-weight:600; color:var(--text-muted);">SOURCE CODE EDITOR</span>
+                            </div>
+                            <div id="monaco-container" style="height: calc(100% - 32px);"></div>
+                        </div>
+                        
+                        <div class="gutter-resizer" id="workspace-resizer-gutter">
+                            <div class="gutter-handle"></div>
+                        </div>
+                        
+                        <div class="preview-section" id="preview-pane-container">
+                            <div class="preview-bar">
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <div class="preview-status-dot"></div>
+                                    <span>Live Web Preview</span>
+                                </div>
+                            </div>
+                            <div style="position: relative; flex: 1;">
+                                <div class="iframe-overlay" id="iframe-drag-overlay"></div>
+                                <iframe id="web-preview-iframe"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let currentStep = 1;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            let user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+            let dbUser = null;
+
+            if (typeof getDB === 'function' && user) {
+                const db = getDB();
+                dbUser = db.users.find(u => u.id === user.id);
+            } else {
+                const localUser = localStorage.getItem("loggedInUser");
+                if (localUser) {
+                    dbUser = { username: localUser, track: localStorage.getItem("userRole") || "fullstack", task: null };
+                }
+            }
+
+            // Load assigned task
+            const taskTextElement = document.getElementById('assigned-task-text');
+            if (dbUser && dbUser.task) {
+                taskTextElement.textContent = dbUser.task;
+            } else {
+                taskTextElement.textContent = "Task Requirement Specification:\nBuild a high-performance interactive application widget. Your assignment involves managing responsive system assets, defining appropriate database relational entities, and tuning dynamic interface updates.";
+            }
+
+            const trackLabel = dbUser ? (dbUser.track || 'fullstack') : 'fullstack';
+            document.getElementById('dynamic-mission-brief').innerHTML = `<strong>Role Track:</strong> ${trackLabel.toUpperCase()}<br><strong>Status:</strong> Under Evaluation`;
+            
+            updateUIState();
+            initSplitResizer();
+        });
+
+        function handleNextSession() {
+            if (currentStep < 3) {
+                currentStep++;
+                window.currentStep = currentStep; 
+                updateUIState();
+            } else {
+                if (confirm('Submit complete implementation files to the technical evaluation team?')) {
+                    let user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+                    if (user && typeof completeAssessment === 'function') {
+                        completeAssessment(user.id, { score: 'Awaiting Review' });
+                    }
+                    alert('Submission recorded successfully.');
+                    window.location.href = 'candidate-dashboard.html';
+                }
+            }
+        }
+
+        function handlePrevSession() {
+            if (currentStep > 1) {
+                currentStep--;
+                window.currentStep = currentStep;
+                updateUIState();
+            }
+        }
+
+        function updateUIState() {
+            const viewTask = document.getElementById('view-task');
+            const viewEditor = document.getElementById('view-editor');
+            const wsTitle = document.getElementById('workspace-title');
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const btnRun = document.getElementById('btn-run');
+            
+            document.querySelectorAll('.step').forEach(el => el.className = 'step pending');
+
+            if (currentStep === 1) {
+                viewTask.classList.remove('hidden');
+                viewTask.classList.add('active');
+                viewEditor.classList.add('hidden');
+                btnRun.classList.add('hidden');
+                wsTitle.textContent = "System Architecture Requirements";
+                document.getElementById('step-1').className = 'step active';
+                btnPrev.disabled = true;
+                btnNext.innerText = "Next Session \u2192";
+            } else {
+                viewTask.classList.add('hidden');
+                viewTask.classList.remove('active');
+                viewEditor.classList.remove('hidden');
+                viewEditor.className = "editor-workspace-wrapper"; 
+                btnRun.classList.remove('hidden');
+                btnPrev.disabled = false;
+                
+                if (currentStep === 2) {
+                    wsTitle.textContent = "Database & Architecture Implementation";
+                    document.getElementById('step-1').className = 'step completed';
+                    document.getElementById('step-2').className = 'step active';
+                    btnNext.innerText = "Next Session \u2192";
+                } else if (currentStep === 3) {
+                    wsTitle.textContent = "Application Testing & Deployment Controls";
+                    document.getElementById('step-1').className = 'step completed';
+                    document.getElementById('step-2').className = 'step completed';
+                    document.getElementById('step-3').className = 'step active';
+                    btnNext.innerText = "Submit Project \u2713";
+                }
+                
+                if (window.monacoEditorInstance) {
+                    window.monacoEditorInstance.layout();
+                }
+            }
+        }
+
+        // Resizer logic
+        function initSplitResizer() {
+            const gutter = document.getElementById('workspace-resizer-gutter');
+            const codePane = document.getElementById('code-pane-container');
+            const container = document.getElementById('workspace-splitter-layout');
+            const overlay = document.getElementById('iframe-drag-overlay');
+
+            if (!gutter || !codePane || !container) return;
+
+            gutter.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                overlay.style.display = 'block';
+                gutter.classList.add('resizing');
+
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+            });
+
+            function handleMouseMove(e) {
+                // Disable resizing on mobile
+                if (window.innerWidth <= 768) return;
+                
+                const containerRect = container.getBoundingClientRect();
+                let currentLeftX = e.clientX - containerRect.left;
+                let percentageWidth = (currentLeftX / containerRect.width) * 100;
+
+                if (percentageWidth < 20) percentageWidth = 20;
+                if (percentageWidth > 80) percentageWidth = 80;
+
+                codePane.style.width = percentageWidth + '%';
+
+                if (window.monacoEditorInstance) {
+                    window.monacoEditorInstance.layout();
+                }
+            }
+
+            function handleMouseUp() {
+                overlay.style.display = 'none';
+                gutter.classList.remove('resizing');
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+                
+                if (window.monacoEditorInstance) {
+                    window.monacoEditorInstance.layout();
+                }
+            }
+        }
+    </script>
+    <script src="session-eval.js"></script>
+</body>
+</html>

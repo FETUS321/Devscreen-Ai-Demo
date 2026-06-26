@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Dashboard | DevScreen Enterprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="auth.js"></script>
+    <style>
+        :root {
+            --bg: #f8fafc; --panel: #ffffff; --text: #0f172a; --muted: #64748b;
+            --primary: #2563eb; --border: #e2e8f0; --success: #10b981;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); }
+        .header { background: var(--panel); padding: 16px 32px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 700; font-size: 1.2rem; }
+        .logo span { color: var(--primary); }
+        .btn-outline { border: 1px solid var(--border); background: transparent; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;}
+        .btn-outline:hover { background: #f1f5f9; }
+        .container { max-width: 800px; margin: 60px auto; padding: 0 20px; text-align: center; }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 40px; margin-top: 30px;}
+        .card h3 { font-size: 1.5rem; margin-bottom: 10px;}
+        .badge { display: inline-block; padding: 6px 14px; border-radius: 16px; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 20px; background: #e0e7ff; color: #3730a3; }
+        .btn-start { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: 0.2s;}
+        .btn-start:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn-start:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header { padding: 16px 20px; flex-direction: column; gap: 12px; align-items: flex-start;}
+            .container { padding: 0 16px; margin: 30px auto; }
+            .card { padding: 24px; }
+            .btn-start { width: 100%; padding: 12px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">DevScreen</div>
+        <button class="btn-outline" onclick="logout()">Logout</button>
+    </header>
+
+    <div class="container">
+        <h2 id="greeting">Welcome, Candidate</h2>
+        
+        <div class="card" id="assessment-card">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <script src="candidate-dashboard.js"></script>
+</body>
+</html>

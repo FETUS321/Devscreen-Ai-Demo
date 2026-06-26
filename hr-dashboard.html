@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Dashboard | DevScreen Enterprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="auth.js"></script>
+    <style>
+        :root {
+            --bg: #f8fafc; --panel: #ffffff; --text: #0f172a; --muted: #64748b;
+            --primary: #2563eb; --border: #e2e8f0; --success: #10b981;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); }
+        .header { background: var(--panel); padding: 16px 32px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 700; font-size: 1.2rem; }
+        .logo span { color: var(--primary); }
+        .btn-outline { border: 1px solid var(--border); background: transparent; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;}
+        .btn-outline:hover { background: #f1f5f9; }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;}
+        .card-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 16px 20px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        .table th { background: #f8fafc; color: var(--muted); font-weight: 500; }
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        .badge.pending { background: #fef3c7; color: #92400e; }
+        .badge.completed { background: #dcfce7; color: #166534; }
+        select { padding: 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.85rem; }
+        .btn-action { background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
+        .btn-action:hover { background: #1d4ed8; }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px 20px; }
+            .container { padding: 0 16px; margin: 24px auto; }
+            .card-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .table th, .table td { white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">DevScreen <span>HR Dashboard</span></div>
+        <button class="btn-outline" onclick="logout()">Logout</button>
+    </header>
+
+    <div class="container">
+        <h2>Candidate Management</h2>
+        <p style="color: var(--muted); margin-bottom: 24px; margin-top: 8px;">Assign tracks and view assessment results.</p>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Active Candidates</h3>
+                <button class="btn-outline">Invite Candidate</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Assigned Track</th>
+                            <th>Status</th>
+                            <th>Score/Review</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="candidate-list">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="hr-dashboard.js"></script>
+</body>
+</html>

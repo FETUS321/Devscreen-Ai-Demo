@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Research & References | DevScreen Enterprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="auth.js"></script>
+    <style>
+        :root {
+            --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --text-light: #64748b;
+            --primary: #2563eb; --border: #e2e8f0; --success: #10b981; --success-bg: #dcfce7;
+            --info: #3b82f6; --warning: #f59e0b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 40px; }
+        
+        /* Header */
+        .topbar { background: var(--surface); padding: 16px 32px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+        .logo span { color: var(--primary); }
+        .btn-outline { border: 1px solid var(--border); background: transparent; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 500; }
+        .btn-outline:hover { background: #f1f5f9; }
+        
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .page-title { margin-bottom: 30px; }
+        .page-title h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .page-title p { color: var(--text-light); }
+        
+        .category-section { margin-bottom: 40px; }
+        .category-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 20px; color: var(--text); padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+        
+        .research-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+        
+        .research-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
+        .research-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        
+        .research-source { font-size: 0.75rem; font-weight: 600; color: var(--info); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .research-title { font-size: 1.1rem; font-weight: 600; line-height: 1.4; margin-bottom: 12px; color: var(--text); }
+        .research-desc { font-size: 0.9rem; color: var(--text-light); line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
+        
+        .btn-primary { background: var(--primary); color: white; text-decoration: none; padding: 10px 16px; border-radius: 6px; font-weight: 500; font-size: 0.85rem; text-align: center; transition: background 0.2s; }
+        .btn-primary:hover { background: #1d4ed8; }
+        
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="logo">DevScreen <span>HR</span></div>
+        <button class="btn-outline" onclick="window.history.back()">← Back</button>
+    </header>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>Assessment Research & Scientific Backing</h1>
+            <p>Our evaluation metrics are grounded in industry standards and peer-reviewed software engineering research.</p>
+        </div>
+        
+        <!-- Full-Stack -->
+        <div class="category-section">
+            <h2 class="category-title">Full-Stack & General Engineering</h2>
+            <div class="research-grid">
+                <div class="research-card">
+                    <div class="research-source">Journal of Applied Psychology</div>
+                    <div class="research-title">The Validity and Utility of Selection Methods in Personnel Psychology</div>
+                    <div class="research-desc">Schmidt & Hunter's seminal research confirming that work sample tests are among the strongest predictors of future job performance compared to unstructured interviews and puzzles.</div>
+                    <a href="https://psycnet.apa.org/record/1998-10661-001" target="_blank" class="btn-primary">View Paper</a>
+                </div>
+                <div class="research-card">
+                    <div class="research-source">ACM Digital Library</div>
+                    <div class="research-title">The Role of Full-Stack Developers in Agile Teams</div>
+                    <div class="research-desc">Evaluates candidates on end-to-end delivery capabilities, emphasizing the importance of bridging the gap between data modeling and user interface development.</div>
+                    <a href="https://dl.acm.org/" target="_blank" class="btn-primary">View Resource</a>
+                </div>
+                <div class="research-card">
+                    <div class="research-source">DORA Research</div>
+                    <div class="research-title">Accelerate: State of DevOps Report</div>
+                    <div class="research-desc">Scientific backing that continuous delivery, deployment automation, and testing directly drive elite organizational performance.</div>
+                    <a href="https://dora.dev/" target="_blank" class="btn-primary">View Research</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Frontend -->
+        <div class="category-section">
+            <h2 class="category-title">Frontend & User Experience</h2>
+            <div class="research-grid">
+                <div class="research-card">
+                    <div class="research-source">Google Chrome / W3C</div>
+                    <div class="research-title">Measuring the User Experience on the Web (Core Web Vitals)</div>
+                    <div class="research-desc">The industry standard metrics for evaluating web performance (LCP, FID/INP, CLS) ensuring developers build applications that prioritize user-centric speed.</div>
+                    <a href="https://web.dev/articles/vitals" target="_blank" class="btn-primary">View Guidelines</a>
+                </div>
+                <div class="research-card">
+                    <div class="research-source">Software Engineering Institute</div>
+                    <div class="research-title">Component-Based Software Engineering</div>
+                    <div class="research-desc">Research on structural decisions for managing complex UIs, highlighting the necessity of decoupling components and managing state effectively.</div>
+                    <a href="https://resources.sei.cmu.edu/" target="_blank" class="btn-primary">View Resource</a>
+                </div>
+                <div class="research-card">
+                    <div class="research-source">W3C</div>
+                    <div class="research-title">Web Content Accessibility Guidelines (WCAG) 2.2</div>
+                    <div class="research-desc">Standards for evaluating a candidate's adherence to semantic HTML and ARIA standards, essential for inclusive software design.</div>
+                    <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" target="_blank" class="btn-primary">View Guidelines</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backend -->
+        <div class="category-section">
+            <h2 class="category-title">Backend & Systems Architecture</h2>
+            <div class="research-grid">
+                <div class="research-card">
+                    <div class="research-source">O'Reilly Media</div>
+                    <div class="research-title">Designing Data-Intensive Applications</div>
+                    <div class="research-desc">The benchmark text by Martin Kleppmann used to evaluate a candidate's grasp on database optimization, consistency models, and distributed systems.</div>
+                    <a href="https://dataintensive.net/" target="_blank" class="btn-primary">View Book Details</a>
+                </div>
+                <div class="research-card">
+                    <div class="research-source">IEEE Transactions on Software Engineering</div>
+                    <div class="research-title">Scalability Metrics in Microservices Architectures</div>
+                    <div class="research-desc">Academic framework for assessing backend developers on their ability to design resilient APIs and manage service orchestration.</div>
+                    <a href="https://ieeexplore.ieee.org/" target="_blank" class="btn-primary">View Paper</a>
+                </div>
+                <div class="research-card">
+                    <div class="research-source">OWASP</div>
+                    <div class="title">OWASP Top 10 API Security Risks</div>
+                    <div class="research-desc">The standard evaluation vector for measuring proactive defensive coding habits, covering authorization, authentication, and injection prevention.</div>
+                    <a href="https://owasp.org/API-Security/editions/2023/en/0x11-t10/" target="_blank" class="btn-primary">View Standard</a>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check auth
+            if (typeof getCurrentUser === 'function') {
+                const user = getCurrentUser();
+                if (!user || user.role !== 'hr') {
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

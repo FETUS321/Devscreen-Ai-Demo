@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Evaluation | DevScreen Enterprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="auth.js"></script>
+    <style>
+        :root {
+            --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --text-light: #64748b;
+            --primary: #2563eb; --border: #e2e8f0; --success: #10b981; --success-bg: #dcfce7;
+            --info: #3b82f6; --warning: #f59e0b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 40px; }
+        
+        /* Header */
+        .topbar { background: var(--surface); padding: 16px 32px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+        .logo span { color: var(--primary); }
+        .btn-outline { border: 1px solid var(--border); background: transparent; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 500; }
+        .btn-outline:hover { background: #f1f5f9; }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .page-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .page-title h1 { font-size: 1.5rem; font-weight: 700; }
+        .page-actions { display: flex; gap: 10px; }
+        
+        /* Main Layout */
+        .eval-wrapper { display: flex; flex-direction: column; gap: 20px; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); overflow: hidden; padding: 24px; }
+        
+        /* Profile Header */
+        .profile-header { display: flex; justify-content: space-between; align-items: center; }
+        .profile-info { display: flex; align-items: center; gap: 16px; }
+        .avatar { width: 64px; height: 64px; border-radius: 50%; background: #e2e8f0; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: 600; color: #475569; }
+        .profile-details h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+        .profile-details p { color: var(--text-light); font-size: 0.9rem; }
+        .profile-status { text-align: right; }
+        .badge-status { display: inline-block; padding: 6px 12px; background: var(--success-bg); color: var(--success); font-weight: 600; font-size: 0.8rem; border-radius: 20px; margin-bottom: 8px; }
+        
+        /* Top Metrics */
+        .metrics-row { display: flex; justify-content: space-between; border-top: 1px solid var(--border); margin-top: 24px; padding-top: 24px; }
+        .metric-col { padding: 0 20px; border-right: 1px solid var(--border); flex: 1; }
+        .metric-col:last-child { border-right: none; }
+        .metric-col:first-child { padding-left: 0; }
+        .metric-label { font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px; font-weight: 500; display: flex; align-items: center; gap: 6px;}
+        .metric-value { font-size: 1.6rem; font-weight: 700; display: flex; align-items: baseline; gap: 4px; }
+        
+        .skill-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+        .skill-tag { background: #eff6ff; color: #1e40af; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 500; }
+        
+        /* Grid Masonry */
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 20px; align-items: start; }
+        
+        .section-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between; color: var(--text); }
+        
+        /* Progress Bars */
+        .progress-list { display: flex; flex-direction: column; gap: 12px; }
+        .progress-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; font-weight: 500; }
+        .progress-label { width: 110px; color: var(--text-light); }
+        .progress-bar-bg { flex: 1; height: 8px; background: #f1f5f9; border-radius: 4px; margin: 0 12px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; border-radius: 4px; }
+        .progress-score { width: 35px; text-align: right; font-weight: 600; }
+        
+        /* Mini Cards */
+        .mini-card-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+        .mini-card { padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        .mini-card:last-child { border-bottom: none; padding-bottom: 0; }
+        .mini-score { font-size: 2.2rem; font-weight: 700; margin: 8px 0; }
+        .mini-score span { font-size: 1.1rem; color: var(--text-light); font-weight: 500; }
+        .mini-text { font-size: 0.9rem; color: var(--text-light); }
+        
+        /* Timeline */
+        .timeline { display: flex; flex-direction: column; gap: 24px; position: relative; margin-left: 10px; }
+        .timeline::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
+        .timeline-item { position: relative; padding-left: 44px; }
+        .timeline-icon { position: absolute; left: 0; top: 0; width: 32px; height: 32px; border-radius: 50%; background: #f8fafc; display: flex; justify-content: center; align-items: center; font-size: 0.8rem; font-weight: 600; color: #475569; border: 2px solid #fff; z-index: 2; box-shadow: 0 0 0 1px var(--border); }
+        .timeline-content h4 { font-size: 0.95rem; margin-bottom: 6px; }
+        .timeline-content p { font-size: 0.85rem; color: var(--text-light); line-height: 1.5; }
+        
+        canvas { max-width: 100%; }
+        .chart-wrap { position: relative; height: 200px; width: 100%; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+        .doughnut-center { position: absolute; text-align: center; }
+        .doughnut-center h2 { font-size: 2rem; font-weight: 700; color: var(--text); }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .topbar { flex-direction: column; gap: 12px; align-items: flex-start; padding: 16px 20px; }
+            .container { padding: 0 16px; margin: 20px auto; }
+            .page-title { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .profile-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+            .profile-status { text-align: left; }
+            
+            .metrics-row { flex-direction: column; gap: 20px; }
+            .metric-col { border-right: none; padding: 0; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+            .metric-col:last-child { border-bottom: none; padding-bottom: 0; }
+            
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="logo">DevScreen <span>HR</span></div>
+        <button class="btn-outline" onclick="window.location.href='hr-dashboard.html'">← Back to Candidates</button>
+    </header>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>Candidate Evaluation</h1>
+            <div class="page-actions">
+                <button class="btn-outline">✎ Edit</button>
+                <button class="btn-outline">➦ Share</button>
+                <button class="btn-outline">⬇ Export</button>
+            </div>
+        </div>
+        
+        <div class="eval-wrapper">
+            <!-- Top Profile Card -->
+            <div class="card">
+                <div class="profile-header">
+                    <div class="profile-info">
+                        <div class="avatar" id="c-avatar">?</div>
+                        <div class="profile-details">
+                            <h2 id="c-name">Loading...</h2>
+                            <p id="c-role">Applied: Software Engineer</p>
+                        </div>
+                    </div>
+                    <div class="profile-status">
+                        <div class="badge-status" id="c-status">Evaluating</div>
+                        <p style="font-size: 0.85rem; color: var(--text-light);">Applied: Oct 26, 2026</p>
+                    </div>
+                </div>
+                
+                <div class="metrics-row">
+                    <div class="metric-col">
+                        <div class="metric-label">✓ Overall Score</div>
+                        <div class="metric-value"><span id="c-overall">0.0</span><span style="font-size:1rem; color:var(--text-light)">/10</span></div>
+                    </div>
+                    <div class="metric-col">
+                        <div class="metric-label">💼 Experience</div>
+                        <div class="metric-value" style="font-size:1.4rem;">3+ yrs</div>
+                    </div>
+                    <div class="metric-col">
+                        <div class="metric-label">📚 Skills</div>
+                        <div class="skill-tags" id="c-track-tags">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <div class="metric-col">
+                        <div class="metric-label">👥 Recruiter</div>
+                        <div class="metric-value" style="font-size: 1.1rem; margin-top: 10px;">AI System</div>
+                    </div>
+                    <div class="metric-col">
+                        <div class="metric-label">📅 Stage</div>
+                        <div class="metric-value" style="font-size: 1.1rem; margin-top: 10px;">Technical Interview</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid Content -->
+            <div class="grid-layout">
+                <!-- Left Column -->
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <div class="card">
+                        <div class="section-title">Problem Solving Score <span style="color:var(--text-light)">✓</span></div>
+                        <h2 style="font-size: 2.2rem; margin-bottom: 5px;"><span id="score-problem">0.0</span><span style="font-size:1.1rem;color:var(--text-light)">/10</span></h2>
+                        <p class="mini-text" style="margin-bottom: 24px;">Advanced</p>
+                        
+                        <div class="chart-wrap">
+                            <canvas id="chartDoughnut"></canvas>
+                            <div class="doughnut-center">
+                                <h2 id="doughnut-perc">0%</h2>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="section-title">Code Review Skill <span style="color:var(--text-light)">✓</span></div>
+                        <h2 style="font-size: 2.2rem; margin-bottom: 5px;"><span id="score-code">0.0</span><span style="font-size:1.1rem;color:var(--text-light)">/10</span></h2>
+                        <p class="mini-text" style="margin-bottom: 24px;">High Proficiency</p>
+                        
+                        <div class="progress-list" id="code-bars">
+                            <!-- JS injected -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Middle Column -->
+                <div class="card" style="padding: 24px 30px;">
+                    <div class="mini-card-grid">
+                        <div class="mini-card">
+                            <div class="section-title" style="margin-bottom: 10px;">Technical Interview <span style="font-size: 1rem; color:var(--text-light)">📊</span></div>
+                            <div class="mini-score"><span id="score-tech">0.0</span><span>/10</span></div>
+                            <div class="progress-list" id="tech-list" style="margin-top: 20px;">
+                                <!-- JS injected -->
+                            </div>
+                        </div>
+                        
+                        <div class="mini-card">
+                            <div class="section-title" style="margin-bottom: 10px;">Projects & Portfolio <span style="color:var(--text-light)">✓</span></div>
+                            <div class="mini-score"><span id="score-arch">8.0</span><span>/10</span></div>
+                            <div class="progress-list" style="margin-top: 15px;">
+                                <div class="progress-item"><span class="progress-label">Portfolio Site</span><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:80%;background:#10b981;"></div></div></div>
+                                <div class="progress-item"><span class="progress-label">Open Source</span><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:60%;background:#3b82f6;"></div></div></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mini-card" style="border-bottom:none;">
+                            <div class="section-title" style="margin-bottom: 10px;">Communication <span style="color:var(--text-light)">✓</span></div>
+                            <div class="mini-score"><span id="score-comm">8.3</span><span>/10</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <div class="card">
+                        <div class="section-title">Key Skills Overview <span style="color:var(--text-light)">...</span></div>
+                        <div class="chart-wrap" style="height: 240px;">
+                            <canvas id="chartRadar"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="section-title">Interviewer Feedback <span style="color:var(--text-light)">...</span></div>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-icon">A</div>
+                                <div class="timeline-content">
+                                    <h4>Alice M.</h4>
+                                    <p>Candidate demonstrated strong architectural patterns and exciting potential for the role.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-icon">B</div>
+                                <div class="timeline-content">
+                                    <h4>Ben L.</h4>
+                                    <p>Interviewer team processes the technical test positively. Recommendation to advance to final round.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-icon">C</div>
+                                <div class="timeline-content">
+                                    <h4>Chris K.</h4>
+                                    <p>Highly skilled problem solver. Great communication on alternatives.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="section-title">Recommendation <span style="color:var(--text-light)">...</span></div>
+                        <div class="timeline-item" style="padding-left: 44px; margin-top: 10px;">
+                            <div class="timeline-icon" style="background:var(--success-bg); color:var(--success); border-color:#fff;">✓</div>
+                            <div class="timeline-content">
+                                <h4>Hiring Manager</h4>
+                                <p style="color:#0f172a; font-weight:500;">Strong Candidate. Highly skilled. Advancing to Final Round.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Research References Section -->
+            <div class="card">
+                <div class="section-title">Evaluation Criteria & Research Backing <span style="color:var(--text-light)"></span></div>
+                <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 16px;">
+                    This candidate was evaluated using metrics backed by industry research and academic studies specific to their role.
+                </p>
+                <div id="research-content" style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- JS Injected -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="candidate-evaluation.js"></script>
+</body>
+</html>
