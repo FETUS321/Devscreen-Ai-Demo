@@ -175,6 +175,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 source: "Web Content Accessibility Guidelines (WCAG) 2.2",
                 desc: "Assesses the candidate's adherence to semantic HTML and ARIA standards, which research shows is a strong predictor of mature frontend engineering skills.",
                 link: "https://www.w3.org/WAI/standards-guidelines/wcag/"
+            },
+            {
+                title: "Latency and Consumer Behavior in E-Commerce",
+                source: "Akamai & Amazon Research",
+                desc: "Studies demonstrating that a 100ms delay in page load time reduces conversion rates by 7%. Evaluates a candidate's focus on optimization.",
+                link: "https://www.akamai.com/our-thinking/the-state-of-online-retail-performance"
+            },
+            {
+                title: "Design Systems and Engineering Velocity",
+                source: "Nielsen Norman Group",
+                desc: "Research validating that strict adherence to design systems and reusable component architectures significantly reduces technical debt.",
+                link: "https://www.nngroup.com/articles/design-systems/"
             }
         ],
         backend: [
@@ -195,6 +207,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 source: "OWASP Top 10 API Security Risks",
                 desc: "An essential evaluation vector measuring the candidate's proactive defensive coding habits, covering authorization, authentication, and data validation.",
                 link: "https://owasp.org/API-Security/editions/2023/en/0x11-t10/"
+            },
+            {
+                title: "Brewer's CAP Theorem and Distributed Systems",
+                source: "ACM PODC",
+                desc: "The theoretical foundation for evaluating how backend candidates make trade-offs between Consistency, Availability, and Partition Tolerance.",
+                link: "https://en.wikipedia.org/wiki/CAP_theorem"
+            },
+            {
+                title: "Site Reliability Engineering Metrics (SLI/SLO)",
+                source: "Google SRE Book",
+                desc: "Evaluates backend candidates on their operational maturity, specifically monitoring, incident response, and error budget management.",
+                link: "https://sre.google/sre-book/table-of-contents/"
             }
         ],
         fullstack: [
@@ -215,6 +239,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 source: "DORA (DevOps Research and Assessment)",
                 desc: "Criteria includes the candidate's understanding of deployment pipelines and infrastructure-as-code, which correlates with elite engineering team performance.",
                 link: "https://dora.dev/"
+            },
+            {
+                title: "Structured Interviewing & Behavioral Assessments",
+                source: "Google re:Work",
+                desc: "Google's extensive internal research proving that structured interviews with consistent rubrics and work-sample tests are vastly superior to unstructured technical chats.",
+                link: "https://rework.withgoogle.com/guides/hiring-use-structured-interviewing/"
+            },
+            {
+                title: "The Impact of Generative AI on Developer Productivity",
+                source: "MIT & GitHub",
+                desc: "Recent studies showing how modern developers are evaluated not just on rote coding, but on their ability to integrate AI assistance safely and architecturally.",
+                link: "https://github.blog/2022-09-07-research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/"
             }
         ]
     };
